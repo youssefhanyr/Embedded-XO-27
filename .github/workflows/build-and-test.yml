@@ -8,38 +8,27 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+    
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release, Debug]
-        
-    runs-on: ${{ matrix.os }}
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up C++ toolchain (Linux)
-      if: runner.os == 'Linux'
+    - name: Set up C++ toolchain
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential cmake ninja-build
         sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xfixes0 libxcb-xinerama0
         
-    - name: Set up C++ toolchain (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install cmake ninja
-        
-    - name: Set up MSVC (Windows)
-      if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
-      
     - name: Install Qt6
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.6.0'
-        host: ${{ runner.os == 'Linux' && 'linux' || runner.os == 'Windows' && 'windows' || 'mac' }}
+        host: 'linux'
         target: 'desktop'
         modules: 'qtmultimedia qtmultimediawidgets'
         cache: true
@@ -55,45 +44,12 @@ jobs:
       working-directory: build
       run: ctest --output-on-failure -C ${{ matrix.build_type }}
       
-    - name: Upload build artifacts (Release only)
-      if: matrix.build_type == 'Release'
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-${{ matrix.os }}-${{ matrix.build_type }}
+        name: build-${{ matrix.build_type }}
         path: |
           build/
           !build/**/*.obj
           !build/**/*.o
           !build/CMakeFiles/
-          
-  package:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts/
-        
-    - name: Create release package
-      run: |
-        mkdir -p release
-        cd artifacts
-        for dir in */; do
-          if [[ $dir == *"Release"* ]]; then
-            cp -r "$dir"* ../release/
-          fi
-        done
-        cd ../release
-        tar -czf ../release-package.tar.gz *
-        
-    - name: Upload release package
-      uses: actions/upload-artifact@v4
-      with:
-        name: release-package
-        path: release-package.tar.gz
