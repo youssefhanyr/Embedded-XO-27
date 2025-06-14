@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 cmake_minimum_required(VERSION 3.16)
 
 project(TicTacToe VERSION 0.1 LANGUAGES CXX)
@@ -196,4 +195,3 @@ install(TARGETS TicTacToe
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(TicTacToe)
 endif()
->>>>>>> youssefhanyr-patch-1
