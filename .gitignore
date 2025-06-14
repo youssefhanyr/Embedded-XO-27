@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Source/minimax.exe
 testers.py
 Source/output/minimax.exe
@@ -24,4 +23,3 @@ build*/
 *.moc
 *.qrc.*
 *.qmlc
->>>>>>> youssefhanyr-patch-1
