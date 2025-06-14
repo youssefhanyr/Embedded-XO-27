@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Source/minimax.exe
 testers.py
 Source/output/minimax.exe
@@ -12,3 +13,15 @@ sfsf.exe
 sfsf.cpp
 Source/Untitled-1.cpp
 Source/random.exe
+=======
+*.user
+*.pro.user
+build*/
+*.o
+*.log
+*.obj
+*.autosave
+*.moc
+*.qrc.*
+*.qmlc
+>>>>>>> youssefhanyr-patch-1
